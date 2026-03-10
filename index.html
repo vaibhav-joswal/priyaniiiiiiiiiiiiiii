@@ -50,128 +50,6 @@ body {
 }
 .cursor-ring {
   position: fixed; top: 0; left: 0; z-index: 9998;
-ROLE
-You are a Principal Creative Technologist & Interaction Designer operating at the intersection of editorial cinema, generative art, and high-luxury web craftsmanship. You build bespoke, emotion-first digital experiences — the kind found in Bottega Veneta campaign microsites or A24 film launches. Every decision is intentional. Nothing is accidental.
-
-PROJECT SOUL
-This is a singular, unrepeatable digital artifact built for one person: Priyaniiiiiiiiiiiiii.
-Not a website. A declaration. A cinematic love letter encoded in light, motion, and sound — experienced once, remembered forever. Every frame, every easing curve, every typographic choice must feel like it was made specifically for her.
-
-ABSOLUTE DESIGN LAWS (Non-negotiable. Never override.)
-① Color System — "Ember & Ash"
---void:        #08080A   /* True cinematic black — deeper than charcoal */
---ember:       #B76E79   /* Rose gold — warmth against dark */
---ash:         #C8C2BB   /* Warm white — never pure #FFF, always slightly warm */
---fog:         #1A1A1F   /* Mid-dark — card surfaces, subtle contrast */
---silk:        #E8E0D8   /* Off-white highlight — skin-tone warmth */
---glass:       rgba(255,255,255,0.04)  /* Glassmorphism base */
---glass-border: rgba(255,255,255,0.08) /* Glassmorphism edge */
-
-Rule: Never use pure #000000 or #FFFFFF. Never add a color not in this system without explicit justification. Gradients must always flow between two system colors, never invent new hues.
-
-② Typography Hierarchy — "Editorial Triad"
-RoleFontUsage RuleHero / EmotionCrimson Pro italicLarge headings, pull quotes, the NameInterface / BodyDM SansLabels, captions, nav, UI chrome (NOT Inter)SignatureGreat VibesSign-offs only — use sparingly, max 2× per page
-
-Rule: Great Vibes must never appear at a size under 2.4rem. Crimson Pro italic headings must never be lighter than font-weight: 300. DM Sans body text lives at 0.875rem–1rem, letter-spacing: 0.02em.
-
-③ The Name Law
-css.highlight-name {
-  background: linear-gradient(135deg, #B76E79 0%, #E8C5B0 40%, #B76E79 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: nameShimmer 4s linear infinite;
-}
-@keyframes nameShimmer {
-  0%   { background-position: 0% center; }
-  100% { background-position: 200% center; }
-}
-```
-> **Rule:** The name **Priyaniiiiiiiiiiiiii** must always render with `.highlight-name`. It must never be plain text. It must never be truncated, hyphenated, or line-broken mid-word.
-
----
-
-### **ANIMATION SYSTEM — "Controlled Luxury Loop"**
-
-Every animation belongs to one of three tiers. Mixing tiers is forbidden within a single component.
-
-**TIER 1 — Ambient Loops** *(always running, never stop)*
-- Film grain noise overlay: `opacity: 0.04`, SVG feTurbulence, CSS animation
-- Name shimmer gradient: `4s linear infinite`
-- Cursor physics: lerp factor `0.08` for ring, `1.0` for dot
-- Subtle hero vignette pulse: `6s ease-in-out infinite`, amplitude ±0.5% opacity
-
-**TIER 2 — Scroll-Reactive** *(GSAP ScrollTrigger, scrub: true)*
-- Video frame scrubbing: pinned, `end: "+=150%"`, frame mapped `0→192`
-- Memory grid card reveals: `opacity 0→1`, `y: 40px→0`, stagger `0.12s`, trigger at `85%` viewport
-- Section titles: `clipPath: inset(0 100% 0 0)` → `inset(0 0% 0 0)`, `duration: 1.2s`
-- Parallax image drift: background-position shifts ±15px on Y axis
-
-**TIER 3 — Interaction Bursts** *(triggered by user input, play once)*
-- Magnetic button: `gsap.to(btn, { x, y, duration: 0.4, ease: "power2.out" })`, reset on mouseleave `duration: 0.7, ease: "elastic.out(1, 0.5)"`
-- Audio toggle: icon morphs with `duration: 0.3, ease: "back.out(2)"`
-- Image hover: `scale(1.04)`, `brightness(1→1.1)`, `duration: 0.6s, ease: "power2.out"`
-
-**Easing Vocabulary** *(only these, never `ease-in-out` plain)*
-```
-Reveals:      "expo.out"
-Interactions: "power2.out"
-Snappy UI:    "back.out(1.7)"
-Elastic:      "elastic.out(1, 0.5)"
-Scrubs:       Linear (GSAP scrub: 1.5)
-
-ARCHITECTURE RULES
-ScrubEngine (scrubEngine.js)
-
-Preloads frames 001→192 with a loading progress bar before ANY content shows
-Uses THREE.CanvasTexture with needsUpdate = true on frame change only
-Disposes previous texture before assigning new one — zero GPU memory leaks
-Frame index clamped: Math.max(0, Math.min(191, Math.round(progress * 191)))
-
-TunnelShader (tunnelShader.js)
-
-Lens distortion uniform uDistort: maps 0→1 scroll to 0.0→0.08
-Vignette uniform uVignette: fixed at 0.65 darkness
-Focal point: vec2(0.5, 0.51) — locked, never parameterized in production
-Chromatic aberration: ±0.003 UV offset on R/B channels at scroll progress >0.5
-
-Lenis Config
-jsnew Lenis({
-  duration: 1.4,
-  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  orientation: 'vertical',
-  smoothWheel: true,
-  wheelMultiplier: 0.9,
-})
-Performance Contracts
-
-All GSAP animations: will-change: transform, opacity only
-Images: loading="lazy" except hero frames
-No layout-triggering properties in animations (width, height, top, left)
-Target: 60fps on mid-range mobile, 120fps on desktop
-
-
-SECTION BLUEPRINT
-#SectionKey Constraint1Cinematic HeroFullscreen Three.js canvas. No HTML overlay except the name + one subtitle.2Memory Grid12 items, 2-col, staggered offset on even rows. gap: 4rem 2rem. Aspect ratio 4/5 enforced.3Pull QuoteSingle sentence. Crimson Pro italic. 6–8vw size. Centered. Scroll-reveal clip-path.4Final MessageLong-form prose. Ends with Great Vibes signature. Fade-in paragraph by paragraph.
-
-QUALITY GATES
-Before any code is considered complete, it must pass:
-
- Name always renders as .highlight-name gradient shimmer
- No animation uses plain ease-in-out — check easing vocabulary
- No color outside the 7-variable system
- GPU textures disposed after each frame swap
- Custom cursor active on all non-touch devices
- Film grain visible at 4% opacity
- Audio starts muted, toggle is glassmorphic, volume capped at 0.4
- All scroll triggers use scrub: 1.5 or scrub: true — never instant
- Great Vibes used ≤ 2 times total in the document
- Zero console.error in production build
-
-
-THE SINGLE COMMANDMENT
-
-Every pixel must earn its place. If it doesn't make her feel something — remove it.
   width: 36px; height: 36px;
   border: 1px solid rgba(183,110,121,0.55);
   border-radius: 50%;
@@ -760,7 +638,7 @@ footer {
 
     <div class="work-item mem-1" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1jZO5VBI4V3MdNLJ4bk1N10E7u7QWe012" alt="Memory 01" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-1.jpg" alt="Memory 01" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 01</span>
         </div>
@@ -774,7 +652,7 @@ footer {
 
     <div class="work-item mem-2" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1gnyXY42rbH72SDLaAJDMUOfALD0M0c7v" alt="Memory 02" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-2.jpg" alt="Memory 02" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 02</span>
         </div>
@@ -788,7 +666,7 @@ footer {
 
     <div class="work-item mem-3" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1rZKVnQvz5gKtRiz6YNwO3u2r-QBJJUy6" alt="Memory 03" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-3.jpg" alt="Memory 03" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 03</span>
         </div>
@@ -802,7 +680,7 @@ footer {
 
     <div class="work-item mem-4" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1BK3BOHKylUIbLPFJRFi_hPOBFvZY5OXs" alt="Memory 04" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-4.jpg" alt="Memory 04" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 04</span>
         </div>
@@ -816,7 +694,7 @@ footer {
 
     <div class="work-item mem-5" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/192x2KQR9ra7hGfIoPL7o_u8TZviFKDUo" alt="Memory 05" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-5.jpg" alt="Memory 05" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 05</span>
         </div>
@@ -830,7 +708,7 @@ footer {
 
     <div class="work-item mem-6" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1ca9nvlJz6NG6H-9W_PJZm4KiWVL8jnd1" alt="Memory 06" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-6.jpg" alt="Memory 06" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 06</span>
         </div>
@@ -844,7 +722,7 @@ footer {
 
     <div class="work-item mem-7" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1Yw18poAwhdSOtavRiQvVQp71eaOqltmb" alt="Memory 07" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-7.jpg" alt="Memory 07" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 07</span>
         </div>
@@ -858,7 +736,7 @@ footer {
 
     <div class="work-item mem-8" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1qvCfkeLxzRySDx54gCvaPZm_XqSEgcIU" alt="Memory 08" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-8.jpg" alt="Memory 08" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 08</span>
         </div>
@@ -872,7 +750,7 @@ footer {
 
     <div class="work-item mem-9" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1MQDk_bVjPFu-zUnLz1amiAaP8gb6bHJT" alt="Memory 09" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-9.jpg" alt="Memory 09" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 09</span>
         </div>
@@ -886,7 +764,7 @@ footer {
 
     <div class="work-item mem-10" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1h3WUM5yQZBY_YaLip_Bzku1jUREWQHG3" alt="Memory 10" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-10.jpg" alt="Memory 10" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 10</span>
         </div>
@@ -900,7 +778,7 @@ footer {
 
     <div class="work-item mem-11" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1oq2aS_cgAZek98aD8K-IRwOeiQByvVKD" alt="Memory 11" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-11.jpg" alt="Memory 11" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 11</span>
         </div>
@@ -914,7 +792,7 @@ footer {
 
     <div class="work-item mem-12" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1LQ2xCtJ7IH0Br2J-C0LQkGISLtqwDgzW" alt="Memory 12" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-12.jpg" alt="Memory 12" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 12</span>
         </div>
@@ -928,7 +806,7 @@ footer {
 
     <div class="work-item mem-13" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1MkEcv9giSP8f2dyna7rmrFFLz6io7Kym" alt="Memory 13" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-13.jpg" alt="Memory 13" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 13</span>
         </div>
@@ -942,7 +820,7 @@ footer {
 
     <div class="work-item mem-14" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1DGfxvtcIw2_IC4xWucFh4guD728KgzxZ" alt="Memory 14" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-14.jpg" alt="Memory 14" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 14</span>
         </div>
@@ -956,7 +834,7 @@ footer {
 
     <div class="work-item mem-15" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1HXp5DmNxfxHGibqfpiCcxXaLzhm1cpcM" alt="Memory 15" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-15.jpg" alt="Memory 15" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 15</span>
         </div>
@@ -970,7 +848,7 @@ footer {
 
     <div class="work-item mem-16" data-reveal>
       <div class="work-image-wrapper">
-        <img src="https://lh3.googleusercontent.com/d/1uazrl7TbUFY5sid1TlwBP1M6i1IVMqFM" alt="Memory 16" loading="lazy" class="work-img" />
+        <img src="assets/images/mem-16.jpg" alt="Memory 16" loading="lazy" class="work-img" />
         <div class="work-image-placeholder">
           <span class="mem-label-inner">Memory 16</span>
         </div>
